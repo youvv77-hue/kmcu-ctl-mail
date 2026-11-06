@@ -220,7 +220,7 @@ const editable=(target,key,rendered)=>{
  const block=target===data?'main':String(target.id);
  const label=key.startsWith('chip:')?'캡슐 문구':({headline:'메인 제목',intro:'상단 안내 문구',title:'섹션 제목',subtitle:'강조 제목',content:'본문',name:'강사 성명',affiliation:'소속 및 직위',afterButton:'추가 안내',banner:'카드 상단 라벨',chips:'정보칩 (한 줄에 하나씩)',date:'날짜 및 시간',reasonTitle:'사유 항목명',reason:'사유 내용',semester:'학년도 및 학기',badge2:'템플릿 라벨',label:'버튼 문구',person:'담당자',phone:'전화번호',email:'이메일'})[key]||(key.startsWith('row:')?(key.endsWith(':0')?'항목명':'내용'):'본문');
  return `<span data-edit-block="${esc(block)}" data-edit-key="${key}" contenteditable="true" tabindex="0" role="textbox" aria-multiline="true" aria-label="${label}" title="${label} 편집" style="${textLayout}outline:1px dashed #829db5;outline-offset:3px;cursor:text">${rendered}</span>`;
-};const isN=current==='notice',red='#a12a2a',accent=isN?'#173b64':red,secondary=isN?'#376c9b':'#b46b00',light=isN?'#f2f7fc':'#fffaf7',border=isN?'#d4e2f0':'#e5d3c4';let logo=cleanLink(data.logoUrl)||DEFAULT_LOGO;
+};const isN=current==='notice',red='#cd5251',accent=isN?'#173b64':red,secondary=isN?'#376c9b':'#b46b00',light=isN?'#f2f7fc':'#fffaf7',border=isN?'#d4e2f0':'#e5d3c4';let logo=cleanLink(data.logoUrl)||DEFAULT_LOGO;
 const div=(txt,style)=>`<div style="letter-spacing:-0.5px;${style}">${txt}</div>`;let content='';
 
 const cardRowLink=(b,i)=>{const row=b.rows[i],hasButton=row.length>=4;const controls=forPreview?'<div data-direct-row-tools style="margin-top:6px">'+directRowButton(b,'rows',i,hasButton?'removeButton':'addButton',hasButton?'링크 버튼 삭제':'+ 본문 아래 링크 버튼')+'</div>':'';if(!hasButton)return controls;const url=mailButtonLink(row[3]),label=editable(b,'row:'+i+':2',esc(row[2]));return '<div style="margin-top:10px">'+propertyControl(b,'cardRow:'+i,(url?`<a href="${esc(url)}" target="_blank" style="display:inline-block;background:${accent};color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:bold">${label}</a>`:`<span style="display:inline-block;border:1px dashed ${border};padding:12px 18px;border-radius:8px">${label} (URL 입력 필요)</span>`))+'</div>'+controls;};
@@ -272,7 +272,7 @@ if(b.type==='card'){let chips=chipValues(b).map((c,i)=>{const capsule=`<span sty
 if(b.type==='speaker'){
  const photo=(/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=\s]+$/.test(b.photoData||'')?b.photoData:'')||cleanLink(b.photo||'');
  const pic=photo?`<img src="${esc(photo)}" width="116" alt="외부강사 프로필" style="width:116px;height:auto;max-width:100%;border-radius:10px;display:block">`:`<div style="width:100px;height:100px;background:#edf0f2;border-radius:10px;text-align:center;line-height:100px;color:#88909b;font-size:12px">강사 사진</div>`;
- const details=div(editable(b,'name',br(b.name||'')),'font-size:20px;font-weight:800;color:#28303b;margin-bottom:5px')+div(editable(b,'affiliation',br(b.affiliation||'')),'font-size:16px;color:#a12a2a;font-weight:700;margin-bottom:12px')+div(editable(b,'content',br(b.content||'')),'font-size:16px;line-height:1.8;color:#586273');
+ const details=div(editable(b,'name',br(b.name||'')),'font-size:20px;font-weight:800;color:#28303b;margin-bottom:5px')+div(editable(b,'affiliation',br(b.affiliation||'')),'font-size:16px;color:#cd5251;font-weight:700;margin-bottom:12px')+div(editable(b,'content',br(b.content||'')),'font-size:16px;line-height:1.8;color:#586273');
  content+=`<tr>${td(section+`<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="border:1px solid #e5d3c4;border-radius:12px"><tr>${td(forPreview?`<div data-canvas-photo="${b.id}" tabindex="0" role="button" aria-label="강사 사진 파일 선택" style="cursor:pointer">${pic}</div>`:pic,'width:125px;padding:18px 8px 18px 18px;vertical-align:top')}${td(details,'padding:18px 14px 18px 8px;vertical-align:top')}</tr></table>`,'padding:18px 24px 10px')}</tr>`;
 }
 if(b.type==='schedule'){
@@ -575,7 +575,7 @@ function bindFormatToolbar(doc){
   }
   const emojiButton=document.createElement('button');emojiButton.type='button';emojiButton.textContent='😊';emojiButton.setAttribute('aria-label','이모지');emojiButton.setAttribute('aria-expanded','false');emojiButton.style.cssText='padding:4px 8px;font-size:13px';
   bindEmojiPicker(emojiButton);formatToolbar.append(emojiButton);
-  const color=document.createElement('input');color.type='color';color.value='#a12a2a';color.dataset.textColor='';color.setAttribute('aria-label','글자 색상');color.title='선택한 글자 색상';color.style.cssText='box-sizing:border-box;width:30px;height:28px;padding:2px;border:1px solid #b7c4d2;border-radius:6px;background:white;cursor:pointer';
+  const color=document.createElement('input');color.type='color';color.value='#cd5251';color.dataset.textColor='';color.setAttribute('aria-label','글자 색상');color.title='선택한 글자 색상';color.style.cssText='box-sizing:border-box;width:30px;height:28px;padding:2px;border:1px solid #b7c4d2;border-radius:6px;background:white;cursor:pointer';
   color.addEventListener('mousedown',e=>{e.preventDefault();focusFormatControl(color);});
   color.addEventListener('input',()=>{const saved=formatSelection,value=normalizeRichColor(color.value);if(!saved||!currentPreviewSession(saved.session)||saved.session.composing||saved.range.collapsed||!value)return;focusFormatControl(saved.session.node);const selection=saved.doc.getSelection();selection.removeAllRanges();selection.addRange(saved.range.cloneRange());saved.doc.execCommand('foreColor',false,value);syncPreviewText(saved.session);saved.place();});
   formatToolbar.append(color);
@@ -847,13 +847,21 @@ const themeRGB=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));
 const themeMix=(a,b,t)=>'#'+themeRGB(a).map((v,i)=>Math.round(v*(1-t)+themeRGB(b)[i]*t).toString(16).padStart(2,'0')).join('');
 function themeLuminance(c){return themeRGB(c).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);}
 function themeContrast(a,b){const x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
-function themeInk(bg){return themeContrast('#ffffff',bg)>=themeContrast('#17212b',bg)?'#ffffff':'#17212b';}
+function themeInk(bg){if(bg.toLowerCase()==='#cd5251')return '#000000';return themeContrast('#ffffff',bg)>=themeContrast('#17212b',bg)?'#ffffff':'#17212b';}
 function themeReadable(color,bg){let c=color;for(let i=0;i<30&&themeContrast(c,bg)<4.5;i++)c=themeMix(c,themeInk(bg),.12);return c;}
 function themeSecondaryCapsule(primary){let color=themeMix(primary,'#ffffff',.82);if(themeContrast(color,'#ffffff')<1.14)color=themeMix(color,'#17212b',.12);return color;}
-function themeSettings(){const primary=themeHex(data.themePrimary)||(current==='notice'?'#173b64':'#a12a2a'),background=themeHex(data.themeBackground)||(current==='notice'?'#f3f6fa':'#f6f1eb');return {primary,background,secondaryCapsule:themeSecondaryCapsule(primary),surface:themeMix(background,'#ffffff',.90),border:themeMix(primary,'#ffffff',.65),onPrimary:themeInk(primary)};}
+function themeSettings(){const primary=themeHex(data.themePrimary)||(current==='notice'?'#173b64':'#cd5251'),background=themeHex(data.themeBackground)||(current==='notice'?'#f3f6fa':'#f6f1eb');return {primary,background,secondaryCapsule:themeSecondaryCapsule(primary),surface:themeMix(background,'#ffffff',.90),border:themeMix(primary,'#ffffff',.65),onPrimary:themeInk(primary)};}
 function applyMailTheme(html){
- if(!themeHex(data.themePrimary)&&!themeHex(data.themeBackground))return html;
- const t=themeSettings(),accentColors=new Set(['#a12a2a','#173b64','#376c9b','#b46b00','#915600','#1f567f','#9a4d22','#a65f54','#9a5c53']),outer=new Set(['#f3f5f8','#f3f6fa','#f6f1eb']),soft=new Set(['#f2f7fc','#fffaf7','#f8ecd8','#e4effa','#fff0df','#fbf7f3','#f4dfd8','#f9eee9','#f6f3ec','#edf4fb']),borders=new Set(['#d4e2f0','#e5d3c4','#e5cfc8','#cbdcf0']);
+ if(!themeHex(data.themePrimary)&&!themeHex(data.themeBackground)){
+  if(current==='notice')return html;
+  return html.replace(/style="([^"]*)"/g,(all,style)=>{
+   if(/^color:\s*#[a-f0-9]{6};?$/i.test(style))return all;
+   style=style.replace(/(^|;)color:\s*(#fff(?:fff)?|white)(?=[;\s]|$)/gi,'$1color:#000000');
+   style=style.replace(/(^|;)color:\s*#cd5251(?=[;\s]|$)/gi,'$1color:'+themeReadable('#cd5251','#fffaf7'));
+   return 'style="'+style+'"';
+  });
+ }
+ const t=themeSettings(),accentColors=new Set(['#cd5251','#a12a2a','#173b64','#376c9b','#b46b00','#915600','#1f567f','#9a4d22','#a65f54','#9a5c53']),outer=new Set(['#f3f5f8','#f3f6fa','#f6f1eb']),soft=new Set(['#f2f7fc','#fffaf7','#f8ecd8','#e4effa','#fff0df','#fbf7f3','#f4dfd8','#f9eee9','#f6f3ec','#edf4fb']),borders=new Set(['#d4e2f0','#e5d3c4','#e5cfc8','#cbdcf0']);
  const readable=themeReadable(t.primary,t.surface);
  return html.replace(/style="([^"]*)"/g,(all,style)=>{
   // User-selected text colors are stored as a color-only span; leave them intact.
