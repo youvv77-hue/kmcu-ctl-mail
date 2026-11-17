@@ -105,4 +105,38 @@ test('43 built-in template/header exports match pre-change SHA-256 fixtures',asy
   }
  });
 });
+test('full personal menu is always visible in the removed guidance slot',async()=>{
+ const x=await setup();await closed(x,async()=>{
+  const panel=x.$('#personalTemplatePanel');assert.equal(panel.tagName,'SECTION');assert.equal(panel.parentElement.tagName,'ASIDE');assert.equal(panel.closest('details'),null);assert.equal(panel.querySelector('summary'),null);assert.equal(panel.closest('[hidden]'),null);
+  assert.equal(x.$('.rail-help'),null);assert.equal(x.$('#railHelp').hidden,true);assert.equal(x.$('#railHelp').getAttribute('aria-hidden'),'true');assert.equal(panel.previousElementSibling,x.$('#railHelp'));assert.equal(x.$('#railHelp').previousElementSibling,x.$('#railFeedback'));
+  assert.equal(x.$('#railTemplates').contains(panel),false);assert.equal(panel.querySelector('h2').textContent,'내 템플릿 저장 · 관리');
+  for(const id of ['personalTemplateName','personalTemplateSaveForm','savePersonalTemplate','personalTemplateSelect','loadPersonalTemplate','renamePersonalTemplate','deletePersonalTemplate','personalTemplateStatus'])assert.ok(panel.contains(x.$('#'+id)),id);
+  for(const id of ['status','draftStatus','draftRetry'])assert.ok(x.$('#railFeedback').contains(x.$('#'+id)),id);
+  assert.equal(x.$('#manualCopyPanel'),null);assert.equal(x.$('#code').closest('[hidden]').id,'railHelp');
+ });
+});
+test('successful Clipboard API copying leaves generated code hidden',async()=>{
+ let copied;const x=await setup({onBoot:w=>{Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async text=>{copied=text;}}});}});await closed(x,async()=>{
+  const html=x.eval('canonicalSnapshot()');await x.$('#copyHtml').onclick();assert.equal(copied,html);assert.equal(x.$('#manualCopyPanel'),null);assert.match(x.$('#status').textContent,/복사했습니다/);
+ });
+});
+test('legacy clipboard success uses selected rendered textarea and then hides it',async()=>{
+ const x=await setup();await closed(x,async()=>{
+  let calls=0;x.w.document.execCommand=command=>{calls++;assert.equal(command,'copy');const code=x.$('#code');assert.equal(code.closest('[hidden]'),null);assert.equal(code.selectionStart,0);assert.equal(code.selectionEnd,code.value.length);return true;};
+  await x.$('#copyHtml').onclick();assert.equal(calls,1);assert.equal(x.$('#manualCopyPanel').hidden,true);assert.equal(x.$('#railOutput').nextElementSibling,x.$('#manualCopyPanel'));assert.match(x.$('#status').textContent,/복사했습니다/);
+ });
+});
+test('failed automatic copying reveals selected readonly code only in export area',async()=>{
+ const x=await setup();await closed(x,async()=>{
+  x.w.document.execCommand=()=>false;await x.$('#copyHtml').onclick();const panel=x.$('#manualCopyPanel'),code=x.$('#code');assert.equal(panel.hidden,false);assert.equal(panel.closest('[hidden]'),null);assert.equal(code.readOnly,true);assert.equal(code.selectionStart,0);assert.equal(code.selectionEnd,code.value.length);assert.equal(code.value,x.eval('canonicalSnapshot()'));assert.equal(x.$('#railOutput').nextElementSibling,panel);assert.match(x.$('#status').textContent,/직접 복사/);
+  panel.querySelector('button').click();assert.equal(panel.hidden,true);assert.equal(x.w.document.activeElement,x.$('#copyHtml'));
+  x.w.document.execCommand=()=>{throw Error('blocked')};await x.$('#copyHtml').onclick();assert.equal(panel.hidden,false);
+  Object.defineProperty(x.w.navigator,'clipboard',{value:{writeText:async()=>{}}});await x.$('#copyHtml').onclick();assert.equal(panel.hidden,true);
+ });
+});
+test('HTML download stays independent of removed guidance and fallback visibility',async()=>{
+ const x=await setup();await closed(x,async()=>{
+  x.eval('window.capturedDownload=null;download=(content,name,type)=>{window.capturedDownload={content,name,type}}');x.$('#downloadHtml').click();assert.equal(x.w.capturedDownload.content,x.eval('canonicalSnapshot()'));assert.equal(x.w.capturedDownload.name,'KMCU_메일링_완성본.html');assert.equal(x.w.capturedDownload.type,'text/html;charset=utf-8');assert.equal(x.$('#manualCopyPanel'),null);
+ });
+});
 (async()=>{for(const [name,fn] of cases){await fn();passed++;console.log('PASS '+name);}console.log(`${passed} suites passed`);})().catch(error=>{console.error(error);process.exitCode=1;});

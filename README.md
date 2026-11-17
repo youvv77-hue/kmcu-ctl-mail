@@ -6,7 +6,9 @@ and the separate online bulletin repository.
 
 ## Personal reusable templates
 
-Open **내 템플릿 저장 · 관리** below the template selector.
+Use the always-visible **내 템플릿 저장 · 관리** section below the export tools.
+The former guidance/code section is no longer displayed. If automatic clipboard
+copying fails, a selected read-only code field appears only in the export area.
 
 - Enter a name and save the current mail as a new snapshot.
 - Select a saved template and load an independent copy. Editing that copy does not

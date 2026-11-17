@@ -2,17 +2,17 @@
 // One key per new template prevents unrelated saves in other tabs being overwritten.
 const PERSONAL_TEMPLATE_PREFIX='kmcu-ctl-mail:personal-template:v1:';
 const personalTemplateState={entries:new Map(),selected:'',busy:false,readError:false};
-const personalTemplatePanel=document.createElement('details');
-personalTemplatePanel.id='personalTemplatePanel';personalTemplatePanel.className='saved-template-tools';
-personalTemplatePanel.innerHTML=`<summary>내 템플릿 저장 · 관리</summary>
+const personalTemplatePanel=document.createElement('section');
+personalTemplatePanel.id='personalTemplatePanel';personalTemplatePanel.className='saved-template-tools';personalTemplatePanel.setAttribute('aria-labelledby','personalTemplateHeading');
+personalTemplatePanel.innerHTML=`<h2 id="personalTemplateHeading">내 템플릿 저장 · 관리</h2>
  <p class="hint">현재 내용을 이름을 붙여 보관하고 다시 사용할 수 있습니다. 이 기기·브라우저에만 저장되며, 브라우저 데이터를 지우면 사라집니다.</p>
  <form id="personalTemplateSaveForm"><label for="personalTemplateName">새 템플릿 이름</label><input id="personalTemplateName" maxlength="80" autocomplete="off" placeholder="예: 교수법 워크숍 · 참여 안내" required><button id="savePersonalTemplate" type="submit">현재 내용을 새 템플릿으로 저장</button></form>
  <label for="personalTemplateSelect">저장한 내 템플릿</label><select id="personalTemplateSelect" aria-describedby="personalTemplateStatus"></select>
  <div class="personal-template-actions"><button id="loadPersonalTemplate" type="button">불러오기</button><button id="renamePersonalTemplate" type="button">이름 변경</button><button id="deletePersonalTemplate" type="button" class="danger">삭제</button></div>
  <p id="personalTemplateStatus" class="hint" role="status" aria-live="polite"></p>`;
-$('#railTemplates').appendChild(personalTemplatePanel);
+$('#personalTemplateSlot').replaceWith(personalTemplatePanel);
 const personalTemplateStyle=document.createElement('style');
-personalTemplateStyle.textContent='.saved-template-tools>summary{display:list-item}.saved-template-tools p{margin:4px 0 8px}.saved-template-tools label{display:block;margin:5px 0;font-weight:650}.saved-template-tools form{display:grid;gap:6px}.personal-template-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px}.personal-template-actions button{min-width:0;min-height:40px;padding:8px 4px}.saved-template-tools [data-error="true"]{color:#b42335}@media(max-width:480px){.personal-template-actions{grid-template-columns:1fr 1fr}.personal-template-actions #loadPersonalTemplate{grid-column:1/-1}}';
+personalTemplateStyle.textContent='.saved-template-tools>h2{font-size:14px;font-weight:700;margin:7px 0}.saved-template-tools p{margin:4px 0 8px}.saved-template-tools label{display:block;margin:5px 0;font-weight:650}.saved-template-tools form{display:grid;gap:6px}.personal-template-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px}.personal-template-actions button{min-width:0;min-height:40px;padding:8px 4px}.saved-template-tools [data-error="true"]{color:#b42335}@media(max-width:480px){.personal-template-actions{grid-template-columns:1fr 1fr}.personal-template-actions #loadPersonalTemplate{grid-column:1/-1}}';
 document.head.appendChild(personalTemplateStyle);
 function personalTemplateMessage(message,error=false){
  const output=$('#personalTemplateStatus');output.textContent=message;output.dataset.error=String(error);
@@ -176,7 +176,6 @@ $('#deletePersonalTemplate').addEventListener('click',()=>{
   personalTemplateMessage('“'+entry.name+'”을 삭제했습니다. 현재 편집 내용과 기본 제공 양식은 유지됩니다.');
  }));
 });
-personalTemplatePanel.addEventListener('toggle',()=>{if(personalTemplatePanel.open&&!personalTemplateState.busy)personalTemplateRefresh();});
 window.addEventListener('storage',event=>{if(event.key===null||event.key===CATALOG_STORAGE_KEY||event.key?.startsWith(PERSONAL_TEMPLATE_PREFIX)){personalTemplateRefresh();}});
-window.addEventListener('focus',()=>{if(personalTemplatePanel.open&&!personalTemplateState.busy)personalTemplateRefresh({announce:false});});
+window.addEventListener('focus',()=>{if(!personalTemplateState.busy)personalTemplateRefresh({announce:false});});
 personalTemplateRefresh();
